@@ -1,4 +1,4 @@
-module github.com/mxrcury/dragonsage
+module github.com/mxrcury/certy
 
 go 1.21.4
 

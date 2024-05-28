@@ -5,7 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
-	"github.com/mxrcury/dragonsage/pkg/logger"
+	"github.com/mxrcury/certy/pkg/logger"
 )
 
 type User struct {

@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/mxrcury/dragonsage/internal/config"
-	"github.com/mxrcury/dragonsage/internal/domain/http"
-	v1 "github.com/mxrcury/dragonsage/internal/domain/http/v1"
-	"github.com/mxrcury/dragonsage/internal/repository"
-	"github.com/mxrcury/dragonsage/internal/service"
-	"github.com/mxrcury/dragonsage/pkg/crypto/hash"
-	"github.com/mxrcury/dragonsage/pkg/crypto/token"
-	"github.com/mxrcury/dragonsage/pkg/database/postgres"
+	"github.com/mxrcury/certy/internal/config"
+	"github.com/mxrcury/certy/internal/domain/http"
+	v1 "github.com/mxrcury/certy/internal/domain/http/v1"
+	"github.com/mxrcury/certy/internal/repository"
+	"github.com/mxrcury/certy/internal/service"
+	"github.com/mxrcury/certy/pkg/crypto/hash"
+	"github.com/mxrcury/certy/pkg/crypto/token"
+	"github.com/mxrcury/certy/pkg/database/postgres"
 )
 
 func main() {

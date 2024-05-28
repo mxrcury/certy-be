@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/mxrcury/dragonsage/internal/service"
+	"github.com/mxrcury/certy/internal/service"
 )
 
 type AuthHandler struct {

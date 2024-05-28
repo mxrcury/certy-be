@@ -2,7 +2,7 @@ package http
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/mxrcury/dragonsage/internal/config"
+	"github.com/mxrcury/certy/internal/config"
 )
 
 type Server struct {

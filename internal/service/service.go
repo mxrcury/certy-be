@@ -1,9 +1,9 @@
 package service
 
 import (
-	"github.com/mxrcury/dragonsage/internal/repository"
-	"github.com/mxrcury/dragonsage/pkg/crypto/hash"
-	"github.com/mxrcury/dragonsage/pkg/crypto/token"
+	"github.com/mxrcury/certy/internal/repository"
+	"github.com/mxrcury/certy/pkg/crypto/hash"
+	"github.com/mxrcury/certy/pkg/crypto/token"
 )
 
 type Services struct {

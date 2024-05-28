@@ -3,7 +3,7 @@ package postgres
 import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
-	"github.com/mxrcury/dragonsage/internal/config"
+	"github.com/mxrcury/certy/internal/config"
 )
 
 var listOfTables = []string{"users", "channels"}

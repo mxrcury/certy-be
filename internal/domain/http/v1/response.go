@@ -2,7 +2,7 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/mxrcury/dragonsage/pkg/logger"
+	"github.com/mxrcury/certy/pkg/logger"
 )
 
 type response struct {
