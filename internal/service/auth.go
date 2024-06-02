@@ -2,21 +2,28 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/mxrcury/certy/internal/repository"
 	"github.com/mxrcury/certy/pkg/crypto/hash"
+	"github.com/mxrcury/certy/pkg/crypto/token"
+	"github.com/mxrcury/certy/pkg/mail"
 )
 
 type AuthService struct {
-	repo   repository.Users
-	hasher *hash.Hasher
+	repo         repository.Users
+	hasher       *hash.Hasher
+	SMTPSender   *mail.SMTPSender
+	TokenManager *token.TokenManager
 }
 
 type AuthServiceDeps struct {
-	repo   repository.Users
-	hasher *hash.Hasher
+	repo         repository.Users
+	hasher       *hash.Hasher
+	SMTPSender   *mail.SMTPSender
+	TokenManager *token.TokenManager
 }
 
 type SignUpInput struct {
@@ -31,7 +38,12 @@ type SignInInput struct {
 }
 
 func NewAuthService(deps *AuthServiceDeps) Auth {
-	return &AuthService{repo: deps.repo, hasher: deps.hasher}
+	return &AuthService{
+		repo:         deps.repo,
+		hasher:       deps.hasher,
+		SMTPSender:   deps.SMTPSender,
+		TokenManager: deps.TokenManager,
+	}
 }
 
 func (s *AuthService) SignUp(input *SignUpInput) error {
@@ -70,4 +82,24 @@ func (s *AuthService) SignIn(input *SignInInput) (*repository.User, error) {
 	}
 
 	return isExistingUser, nil
+}
+
+func (s *AuthService) SendVerificationCode(email string) error {
+	verificationCode, err := s.TokenManager.GenerateCode(6)
+
+	if err != nil {
+		return err
+	}
+
+	input := &mail.SendEmailInput{
+		To:      email,
+		Subject: "Please verify your email",
+		Content: fmt.Sprintf("<p>Hi! Your verification code is <b>%s</b></p>\n", verificationCode),
+	}
+
+	if err := s.SMTPSender.SendEmail(input); err != nil {
+		return err
+	}
+
+	return nil
 }

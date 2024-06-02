@@ -11,8 +11,16 @@ import (
 type User struct {
 	ID       uuid.UUID `json:"id" db:"id"`
 	Username string    `json:"username" db:"username"`
-	Password string    `json:"password" db:"password"`
 	Email    string    `json:"email" db:"email"`
+
+	Password string `json:"password" db:"password"`
+
+	FirstName string         `json:"first_name" db:"first_name"`
+	LastName  sql.NullString `json:"last_name" db:"last_name"`
+	JobTitle  sql.NullString `json:"job_title" db:"job_title"`
+
+	Language sql.NullString `json:"language" db:"language"`
+	Photo    sql.NullString `json:"photo" db:"photo"`
 
 	CreatedAt string         `json:"created_at" db:"created_at"`
 	UpdatedAt sql.NullString `json:"updated_at" db:"updated_at"`
@@ -28,8 +36,8 @@ func NewUsersRepo(db *sqlx.DB) Users {
 
 func (u *UsersRepo) Create(user *User) error {
 	if _, err := u.db.Exec(
-		"INSERT INTO users (id, username, email, password, created_at) values ($1, $2, $3, $4, $5);",
-		user.ID, user.Username, user.Email, user.Password, user.CreatedAt,
+		"INSERT INTO users (id, username, first_name, email, password, created_at, last_name) values ($1, $2, $3, $4, $5, $6, $7);",
+		user.ID, user.Username, user.FirstName, user.Email, user.Password, user.CreatedAt, user.LastName,
 	); err != nil {
 		return err
 	}

@@ -6,7 +6,7 @@ import (
 	"github.com/mxrcury/certy/internal/config"
 )
 
-var listOfTables = []string{"users", "channels"}
+var listOfTables = []string{"users"}
 
 func Init(cfg *config.DatabaseConfig) (*sqlx.DB, error) {
 	db, err := sqlx.Connect(cfg.DatabaseDriver, cfg.DataSourceName)

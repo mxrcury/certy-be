@@ -12,6 +12,7 @@ type (
 		ServerConfig   *ServerConfig
 		DatabaseConfig *DatabaseConfig
 		AuthConfig     *AuthConfig
+		SMTPConfig     *SMTPConfig
 	}
 
 	ServerConfig struct {
@@ -27,6 +28,14 @@ type (
 	AuthConfig struct {
 		AccessTokenSecretKey string
 		PasswordSalt         string
+	}
+
+	SMTPConfig struct {
+		Password string
+		Port     int
+		From     string
+		Host     string
+		Username string
 	}
 )
 
@@ -51,10 +60,16 @@ func Init() (*Config, error) {
 		return nil, err
 	}
 
+	smtpConfig, err := NewSMTPConfig()
+	if err != nil {
+		return nil, err
+	}
+
 	return &Config{
 		DatabaseConfig: databaseConfig,
 		ServerConfig:   serverConfig,
 		AuthConfig:     authConfig,
+		SMTPConfig:     smtpConfig,
 	}, nil
 }
 

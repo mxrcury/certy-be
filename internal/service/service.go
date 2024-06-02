@@ -4,6 +4,7 @@ import (
 	"github.com/mxrcury/certy/internal/repository"
 	"github.com/mxrcury/certy/pkg/crypto/hash"
 	"github.com/mxrcury/certy/pkg/crypto/token"
+	"github.com/mxrcury/certy/pkg/mail"
 )
 
 type Services struct {
@@ -15,12 +16,14 @@ type Deps struct {
 	Repos        *repository.Repositories
 	TokenManager *token.TokenManager
 	Hasher       *hash.Hasher
+	SMTPSender   *mail.SMTPSender
 }
 
 type (
 	Auth interface {
 		SignUp(*SignUpInput) error
 		SignIn(*SignInInput) (*repository.User, error)
+		SendVerificationCode(email string) error
 	}
 
 	Tokens interface {
@@ -32,8 +35,10 @@ func NewServices(deps *Deps) *Services {
 	tokensService := NewTokensService(deps.TokenManager)
 
 	authService := NewAuthService(&AuthServiceDeps{
-		repo:   deps.Repos.UsersRepository,
-		hasher: deps.Hasher,
+		repo:         deps.Repos.UsersRepository,
+		hasher:       deps.Hasher,
+		SMTPSender:   deps.SMTPSender,
+		TokenManager: deps.TokenManager,
 	})
 
 	return &Services{AuthService: authService, TokensService: tokensService}

@@ -29,6 +29,7 @@ func NewAuthHandler(path string, deps *AuthHandlerDeps) Auth {
 func (h *AuthHandler) group(group *gin.RouterGroup) {
 	usersGroup := group.Group(h.path)
 	{
+		usersGroup.GET("/send-code", h.sendVerificationCode)
 		usersGroup.POST("/sign-up", h.signUp)
 		usersGroup.POST("/sign-in", h.signIn)
 	}
@@ -77,4 +78,22 @@ func (h *AuthHandler) signIn(c *gin.Context) {
 	}
 
 	c.JSON(201, &service.JWTTokens{AccessToken: accessToken})
+}
+
+func (h *AuthHandler) sendVerificationCode(c *gin.Context) {
+	email, isEmail := c.GetQuery("email")
+
+	if !isEmail {
+		sendResponse(c, http.StatusBadRequest, "Email param is empty")
+
+		return
+	}
+
+	if err := h.service.SendVerificationCode(email); err != nil {
+		sendResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	c.Status(http.StatusOK)
 }

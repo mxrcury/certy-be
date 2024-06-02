@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/mxrcury/certy/internal/config"
 )
@@ -13,6 +14,7 @@ type Server struct {
 func NewServer(cfg *config.ServerConfig) *Server {
 	router := gin.Default()
 
+	router.Use(cors.New(cors.Config{AllowAllOrigins: true}))
 	router.Use(gin.Logger())
 
 	return &Server{Router: router, port: cfg.Port}

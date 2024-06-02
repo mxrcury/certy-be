@@ -12,6 +12,7 @@ import (
 	"github.com/mxrcury/certy/pkg/crypto/hash"
 	"github.com/mxrcury/certy/pkg/crypto/token"
 	"github.com/mxrcury/certy/pkg/database/postgres"
+	"github.com/mxrcury/certy/pkg/mail"
 )
 
 func main() {
@@ -31,11 +32,19 @@ func main() {
 
 	tokenManager := token.NewTokenManager(cfg.AuthConfig.AccessTokenSecretKey)
 	hasher := hash.NewHasher(cfg.AuthConfig.PasswordSalt)
+	smtpSender := mail.NewSMTPSender(
+		cfg.SMTPConfig.Username,
+		cfg.SMTPConfig.Password,
+		cfg.SMTPConfig.From,
+		cfg.SMTPConfig.Host,
+		cfg.SMTPConfig.Port,
+	)
 
 	services := service.NewServices(&service.Deps{
 		Repos:        repos,
 		TokenManager: tokenManager,
 		Hasher:       hasher,
+		SMTPSender:   smtpSender,
 	})
 
 	server := http.NewServer(cfg.ServerConfig)
