@@ -28,6 +28,7 @@ type (
 		signUp(*gin.Context)
 		signIn(*gin.Context)
 		sendVerificationCode(*gin.Context)
+		verifyCode(*gin.Context)
 	}
 )
 

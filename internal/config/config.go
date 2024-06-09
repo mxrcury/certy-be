@@ -13,6 +13,7 @@ type (
 		DatabaseConfig *DatabaseConfig
 		AuthConfig     *AuthConfig
 		SMTPConfig     *SMTPConfig
+		RedisConfig    *RedisConfig
 	}
 
 	ServerConfig struct {
@@ -36,6 +37,13 @@ type (
 		From     string
 		Host     string
 		Username string
+	}
+
+	RedisConfig struct {
+		Pass string
+		DB   int
+		Host string
+		Port string
 	}
 )
 
@@ -65,11 +73,17 @@ func Init() (*Config, error) {
 		return nil, err
 	}
 
+	redisConfig, err := NewRedisConfig()
+	if err != nil {
+		return nil, err
+	}
+
 	return &Config{
 		DatabaseConfig: databaseConfig,
 		ServerConfig:   serverConfig,
 		AuthConfig:     authConfig,
 		SMTPConfig:     smtpConfig,
+		RedisConfig:    redisConfig,
 	}, nil
 }
 

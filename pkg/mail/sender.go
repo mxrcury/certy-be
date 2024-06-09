@@ -1,6 +1,8 @@
 package mail
 
-import "gopkg.in/gomail.v2"
+import (
+	"gopkg.in/gomail.v2"
+)
 
 type SMTPSender struct {
 	pass     string
@@ -25,20 +27,16 @@ func (m *SMTPSender) SendEmail(input *SendEmailInput) error {
 		return err
 	}
 
-	print("EMAIL:", input.To)
-
 	msg := gomail.NewMessage()
-
 	msg.SetHeader("From", m.from)
 	msg.SetHeader("To", input.To)
 	msg.SetHeader("Subject", input.Subject)
 	msg.SetBody("text/html", input.Content)
 
-	dialer := gomail.NewDialer(m.host, m.port, m.username, m.pass)
-
-	if err := dialer.DialAndSend(msg); err != nil {
-		return err
-	}
+	go func() {
+		dialer := gomail.NewDialer(m.host, m.port, m.username, m.pass)
+		_ = dialer.DialAndSend(msg)
+	}() // maybe remove goroutine to catch errors or find some other way for it
 
 	return nil
 }

@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/mxrcury/certy/internal/repository"
+	"github.com/mxrcury/certy/pkg/cache"
 	"github.com/mxrcury/certy/pkg/crypto/hash"
 	"github.com/mxrcury/certy/pkg/crypto/token"
 	"github.com/mxrcury/certy/pkg/mail"
@@ -17,6 +18,7 @@ type AuthService struct {
 	hasher       *hash.Hasher
 	SMTPSender   *mail.SMTPSender
 	TokenManager *token.TokenManager
+	CacheClient  *cache.Client
 }
 
 type AuthServiceDeps struct {
@@ -24,10 +26,11 @@ type AuthServiceDeps struct {
 	hasher       *hash.Hasher
 	SMTPSender   *mail.SMTPSender
 	TokenManager *token.TokenManager
+	CacheClient  *cache.Client
 }
 
 type SignUpInput struct {
-	Username string `json:"username" binding:"required,min=4,alphanum"`
+	Username string `json:"username" binding:"required,min=4,max=14,alphanum"`
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required,min=5"`
 }
@@ -43,6 +46,7 @@ func NewAuthService(deps *AuthServiceDeps) Auth {
 		hasher:       deps.hasher,
 		SMTPSender:   deps.SMTPSender,
 		TokenManager: deps.TokenManager,
+		CacheClient:  deps.CacheClient,
 	}
 }
 
@@ -97,7 +101,22 @@ func (s *AuthService) SendVerificationCode(email string) error {
 		Content: fmt.Sprintf("<p>Hi! Your verification code is <b>%s</b></p>\n", verificationCode),
 	}
 
+	ttl := time.Minute * 5
+	if err := s.CacheClient.Set(verificationCode, verificationCode, ttl); err != nil {
+		return err
+	}
+
 	if err := s.SMTPSender.SendEmail(input); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *AuthService) VerifyCode(code string) error {
+	_, err := s.CacheClient.Get(code)
+
+	if err != nil {
 		return err
 	}
 

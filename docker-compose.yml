@@ -17,7 +17,7 @@ services:
     env_file:
       - .env
     volumes: 
-      - pgdata:/var/lib/postgresql/data
+      - pgdata:${PG_DATA}
     restart: always
     networks:
       - server
@@ -29,6 +29,15 @@ services:
       - 8080:8080
     networks:
       - server
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - ${REDIS_PORT}:6379
+    networks:
+      - server
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
 
 volumes:
   pgdata:

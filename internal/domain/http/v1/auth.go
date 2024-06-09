@@ -30,6 +30,7 @@ func (h *AuthHandler) group(group *gin.RouterGroup) {
 	usersGroup := group.Group(h.path)
 	{
 		usersGroup.GET("/send-code", h.sendVerificationCode)
+		usersGroup.GET("/verify-code", h.verifyCode)
 		usersGroup.POST("/sign-up", h.signUp)
 		usersGroup.POST("/sign-in", h.signIn)
 	}
@@ -84,12 +85,30 @@ func (h *AuthHandler) sendVerificationCode(c *gin.Context) {
 	email, isEmail := c.GetQuery("email")
 
 	if !isEmail {
-		sendResponse(c, http.StatusBadRequest, "Email param is empty")
+		sendResponse(c, http.StatusBadRequest, "query param email is empty")
 
 		return
 	}
 
 	if err := h.service.SendVerificationCode(email); err != nil {
+		sendResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	c.Status(http.StatusOK)
+}
+
+func (h *AuthHandler) verifyCode(c *gin.Context) {
+	code, isCode := c.GetQuery("code")
+
+	if !isCode {
+		sendResponse(c, http.StatusBadRequest, "query param code is empty")
+
+		return
+	}
+
+	if err := h.service.VerifyCode(code); err != nil {
 		sendResponse(c, http.StatusBadRequest, err.Error())
 
 		return

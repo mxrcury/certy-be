@@ -9,6 +9,7 @@ import (
 	v1 "github.com/mxrcury/certy/internal/domain/http/v1"
 	"github.com/mxrcury/certy/internal/repository"
 	"github.com/mxrcury/certy/internal/service"
+	"github.com/mxrcury/certy/pkg/cache"
 	"github.com/mxrcury/certy/pkg/crypto/hash"
 	"github.com/mxrcury/certy/pkg/crypto/token"
 	"github.com/mxrcury/certy/pkg/database/postgres"
@@ -39,12 +40,19 @@ func main() {
 		cfg.SMTPConfig.Host,
 		cfg.SMTPConfig.Port,
 	)
+	cacheClient := cache.NewClient(&cache.ClientConfig{
+		Host: cfg.RedisConfig.Host,
+		Port: cfg.RedisConfig.Port,
+		Pass: cfg.RedisConfig.Pass,
+		DB:   cfg.RedisConfig.DB,
+	})
 
 	services := service.NewServices(&service.Deps{
 		Repos:        repos,
 		TokenManager: tokenManager,
 		Hasher:       hasher,
 		SMTPSender:   smtpSender,
+		CacheClient:  cacheClient,
 	})
 
 	server := http.NewServer(cfg.ServerConfig)
