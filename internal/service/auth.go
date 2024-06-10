@@ -1,6 +1,7 @@
 package service
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"time"
@@ -30,9 +31,11 @@ type AuthServiceDeps struct {
 }
 
 type SignUpInput struct {
-	Username string `json:"username" binding:"required,min=4,max=14,alphanum"`
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required,min=5"`
+	FirstName string `json:"firstName" binding:"required,min=4,max=14,alphanum"`
+	LastName  string `json:"lastName" binding:"omitempty,min=4,max=14,alphanum"`
+	Username  string `json:"username" binding:"required,min=4,max=14,alphanum"`
+	Email     string `json:"email" binding:"required,email"`
+	Password  string `json:"password" binding:"required,min=5"`
 }
 
 type SignInInput struct {
@@ -54,16 +57,21 @@ func (s *AuthService) SignUp(input *SignUpInput) error {
 	isExistingUser := s.repo.GetByEmailOrUsername(input.Email, input.Username)
 
 	if isExistingUser != nil {
-		return errors.New("user with this email already exists")
+		return errors.New("user with this email or username already exists")
 	}
 
 	hashedPassword := s.hasher.Hash([]byte(input.Password))
 	user := &repository.User{
 		ID:        uuid.New(),
 		Username:  input.Username,
+		FirstName: input.FirstName,
+		LastName: sql.NullString{
+			String: input.LastName,
+			Valid:  input.LastName != "",
+		},
 		Email:     input.Email,
 		Password:  hashedPassword,
-		CreatedAt: time.Now().Format(time.RFC3339Nano),
+		CreatedAt: time.Now().Format(time.RFC3339),
 	}
 
 	err := s.repo.Create(user)

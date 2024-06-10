@@ -2,6 +2,7 @@ package v1
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mxrcury/certy/internal/service"
@@ -102,7 +103,7 @@ func (h *AuthHandler) sendVerificationCode(c *gin.Context) {
 func (h *AuthHandler) verifyCode(c *gin.Context) {
 	code, isCode := c.GetQuery("code")
 
-	if !isCode {
+	if !isCode || strings.TrimSpace(code) == "" {
 		sendResponse(c, http.StatusBadRequest, "query param code is empty")
 
 		return
