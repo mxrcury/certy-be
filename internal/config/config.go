@@ -17,7 +17,9 @@ type (
 	}
 
 	ServerConfig struct {
-		Port string
+		Port      string
+		Domain    string
+		ClientURL string
 	}
 
 	DatabaseConfig struct {

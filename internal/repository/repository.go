@@ -14,7 +14,7 @@ type (
 		Create(user *User) error
 		Update(id uuid.UUID, user *User) (*User, error)
 		GetByEmailOrUsername(email string, username string) *User
-		GetByUsername(username string) *User
+		GetByEmail(email string) *User
 		GetAll(pagination *Pagination) []User
 		DeleteByID(id uuid.UUID) (*User, error)
 	}

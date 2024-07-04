@@ -60,10 +60,10 @@ func (u *UsersRepo) GetByEmailOrUsername(email string, username string) *User {
 	return &user
 }
 
-func (u *UsersRepo) GetByUsername(username string) *User {
+func (u *UsersRepo) GetByEmail(email string) *User {
 	var user User
 
-	if err := u.db.Get(&user, "SELECT * FROM users WHERE username = $1;", username); err != nil {
+	if err := u.db.Get(&user, "SELECT * FROM users WHERE email = $1;", email); err != nil {
 		return nil
 	}
 

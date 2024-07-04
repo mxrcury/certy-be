@@ -6,5 +6,15 @@ func NewServerConfig() (*ServerConfig, error) {
 		return nil, err
 	}
 
-	return &ServerConfig{Port: port}, nil
+	domain, err := getEnv("DOMAIN")
+	if err != nil {
+		return nil, err
+	}
+
+	clientURL, err := getEnv("CLIENT_URL")
+	if err != nil {
+		return nil, err
+	}
+
+	return &ServerConfig{Port: port, Domain: domain, ClientURL: clientURL}, nil
 }

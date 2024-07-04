@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -12,11 +13,13 @@ type AuthHandler struct {
 	service       service.Auth
 	tokensService service.Tokens
 	path          string
+	domainName    string
 }
 
 type AuthHandlerDeps struct {
 	service       service.Auth
 	tokensService service.Tokens
+	domainName    string
 }
 
 func NewAuthHandler(path string, deps *AuthHandlerDeps) Auth {
@@ -24,6 +27,7 @@ func NewAuthHandler(path string, deps *AuthHandlerDeps) Auth {
 		path:          path,
 		service:       deps.service,
 		tokensService: deps.tokensService,
+		domainName:    deps.domainName,
 	}
 }
 
@@ -34,6 +38,8 @@ func (h *AuthHandler) group(group *gin.RouterGroup) {
 		usersGroup.GET("/verify-code", h.verifyCode)
 		usersGroup.POST("/sign-up", h.signUp)
 		usersGroup.POST("/sign-in", h.signIn)
+
+		usersGroup.GET("/profile", h.getProfile)
 	}
 }
 
@@ -79,7 +85,7 @@ func (h *AuthHandler) signIn(c *gin.Context) {
 		return
 	}
 
-	c.JSON(201, &service.JWTTokens{AccessToken: accessToken})
+	c.JSON(http.StatusCreated, service.JWTTokens{AccessToken: accessToken})
 }
 
 func (h *AuthHandler) sendVerificationCode(c *gin.Context) {
@@ -114,6 +120,17 @@ func (h *AuthHandler) verifyCode(c *gin.Context) {
 
 		return
 	}
+
+	c.Status(http.StatusOK)
+}
+
+func (h *AuthHandler) getProfile(c *gin.Context) {
+	cookies := c.Request.Cookies()
+
+	for _, val := range cookies {
+		fmt.Printf("%s ^^^ %#v\n", val.Name, val)
+	}
+	fmt.Println(c.Cookie("user"))
 
 	c.Status(http.StatusOK)
 }

@@ -39,8 +39,8 @@ type SignUpInput struct {
 }
 
 type SignInInput struct {
-	Username string `json:"username" binding:"required,min=4,alphanum"`
-	Password string `json:"password" binding:"required,min=5"`
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required,min=4"`
 }
 
 func NewAuthService(deps *AuthServiceDeps) Auth {
@@ -83,9 +83,9 @@ func (s *AuthService) SignUp(input *SignUpInput) error {
 }
 
 func (s *AuthService) SignIn(input *SignInInput) (*repository.User, error) {
-	isExistingUser := s.repo.GetByUsername(input.Username)
+	isExistingUser := s.repo.GetByEmail(input.Email)
 	if isExistingUser == nil {
-		return nil, errors.New("user with this username does not exist")
+		return nil, errors.New("user with this email does not exist")
 	}
 
 	isValidPassword := s.hasher.Verify([]byte(input.Password), isExistingUser.Password)

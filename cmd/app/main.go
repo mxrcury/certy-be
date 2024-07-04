@@ -57,7 +57,7 @@ func main() {
 
 	server := http.NewServer(cfg.ServerConfig)
 
-	v1.InitHandlers(&v1.Deps{Router: server.Router, Services: services})
+	v1.InitHandlers(&v1.Deps{Router: server.Router, Services: services, Config: cfg})
 
 	if err := server.Run(); err != nil {
 		// add graceful shutdown

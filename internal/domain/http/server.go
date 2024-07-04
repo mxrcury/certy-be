@@ -25,7 +25,7 @@ var allowedMethods = []string{
 func NewServer(cfg *config.ServerConfig) *Server {
 	router := gin.Default()
 
-	router.Use(applyCors())
+	router.Use(applyCors(cfg.ClientURL))
 	router.Use(gin.Logger())
 
 	return &Server{Router: router, port: cfg.Port}
@@ -35,8 +35,12 @@ func (s *Server) Run() error {
 	return s.Router.Run(":" + s.port)
 }
 
-func applyCors() gin.HandlerFunc {
+func applyCors(clientURL string) gin.HandlerFunc {
 	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowAllOrigins = true
+
+	corsConfig.AllowOrigins = []string{clientURL}
+	corsConfig.AllowCredentials = true
+	corsConfig.AllowMethods = allowedMethods
+
 	return cors.New(corsConfig)
 }
